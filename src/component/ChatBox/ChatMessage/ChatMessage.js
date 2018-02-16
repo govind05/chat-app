@@ -15,15 +15,15 @@ const chatMessage = (props) => {
   }
 
   chatMessage = chatMessage.concat(classSender).join(' ');
-  let date = moment().format('LT');
+  let date = moment().format('hh:mm a');
   return (
     <div>
       
       <div className={chatMessage}>
         {senderName}
         {props.message}<br/>
-        <span style={{fontSize:'11px'}}>{date}</span>
-      </div><br /><br />
+        <span style={{fontSize:'11px', float:'right'}}>{date}</span>
+      </div>
     </div>
   );
 }
