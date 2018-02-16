@@ -10,13 +10,24 @@ class FormLogin extends React.Component {
     mode: 'login'
   }
 
-  
+  //For auto signin.
+  componentDidMount() {
+    const auth = firebase.auth();
+    auth.onAuthStateChanged(user => {
+      console.log(user);
+      if (user) {
+        this.props.history.push('/chat');
+      }
+    })
+  }
+  //Changing login to signup and vice versa.
   changeModeHandler = () => {
     let mode = this.state.mode === 'login' ? 'signUp' : 'login'
     this.setState({
       mode
     })
   }
+
   render() {
     let confirmPass = <div className='Input'>
       <Field type='password' name='confirmPassword' placeholder='Confirm Password' />
@@ -45,6 +56,7 @@ class FormLogin extends React.Component {
     )
   }
 }
+//A custom Yup check method for confirm password to be equal to password.
 Yup.addMethod(Yup.mixed, 'sameAs', function (ref, message) {
   return this.test('sameAs', message, function (value) {
     const other = this.resolve(ref);
@@ -52,7 +64,9 @@ Yup.addMethod(Yup.mixed, 'sameAs', function (ref, message) {
   })
 })
 
+//Adding formik to the form.
 const FormikApp = withFormik({
+  //Mapping user input to values.
   mapPropsToValues({ email, password, confirmPassword }) {
     return {
       email: email || '',
@@ -60,17 +74,17 @@ const FormikApp = withFormik({
       confirmPassword: confirmPassword || '',
     }
   },
+  //Validation schema for the form.
   validationSchema: Yup.object().shape({
     email: Yup.string().email('Email not valid').required('Email is required'),
     password: Yup.string().min(8, 'Password must be 8 characters or longer').required('Password is required'),
     confirmPassword: Yup.string().sameAs(Yup.ref('password'), "Password doesn't match")
   }),
 
-
-
+  // Handling the login or Signup event.
   handleSubmit(values, { resetForm, setErrors, setFieldError, setSubmitting }) {
     const auth = firebase.auth();
-
+  
     if (values.confirmPassword) {
       auth.createUserWithEmailAndPassword(values.email, values.password)
         .then((res) => {
@@ -93,11 +107,9 @@ const FormikApp = withFormik({
         .catch((e) => {
           console.log(e)
           setSubmitting(false);
-          setFieldError('error', e.message);          
+          setFieldError('error', e.message);
         });
     }
-
-
   }
 })(FormLogin);
 

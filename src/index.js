@@ -4,6 +4,8 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import * as firebase from 'firebase';
+import {BrowserRouter} from 'react-router-dom';
+
 
 var config = {
   apiKey: "AIzaSyBBYe75LEtklWsbLDY9bPP63t6xmOToEnI",
@@ -16,5 +18,5 @@ var config = {
 
 firebase.initializeApp(config);
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<BrowserRouter><App /></BrowserRouter>, document.getElementById('root'));
 registerServiceWorker();
