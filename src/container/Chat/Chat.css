@@ -1,0 +1,8 @@
+.Chat{
+  height: 100vh;
+  overflow: hidden;
+}
+
+.Chat h1{
+  margin: 0;
+}
