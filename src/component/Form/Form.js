@@ -9,6 +9,8 @@ class FormLogin extends React.Component {
   state = {
     mode: 'login'
   }
+
+  
   changeModeHandler = () => {
     let mode = this.state.mode === 'login' ? 'signUp' : 'login'
     this.setState({
@@ -16,20 +18,24 @@ class FormLogin extends React.Component {
     })
   }
   render() {
-    let confirmPass = <div>
-      {this.props.touched.confirmPassword && this.props.errors.confirmPassword && <p>{this.props.errors.confirmPassword}</p>}
+    let confirmPass = <div className='Input'>
       <Field type='password' name='confirmPassword' placeholder='Confirm Password' />
+      {this.props.touched.confirmPassword && this.props.errors.confirmPassword && <p>{this.props.errors.confirmPassword}</p>}
     </div>
     return (
       <div className='AppForm'>
         <Form className='Form' >
-          <div>
-            {this.props.touched.email && this.props.errors.email && <p>{this.props.errors.email}</p>}
-            <Field type='email' name='email' placeholder='Email' />
+          <div className='Error'>
+            <Field type='hidden' name='error' />
+            {this.props.errors.error && <p>{this.props.errors.error}</p>}
           </div>
-          <div>
-            {this.props.touched.password && this.props.errors.password && <p>{this.props.errors.password}</p>}
+          <div className='Input'>
+            <Field type='email' name='email' placeholder='Email' autoFocus />
+            {this.props.touched.email && this.props.errors.email && <p>{this.props.errors.email}</p>}
+          </div>
+          <div className='Input'>
             <Field type='password' name='password' placeholder='Password' />
+            {this.props.touched.password && this.props.errors.password && <p>{this.props.errors.password}</p>}
           </div>
           {this.state.mode === 'signUp' ? confirmPass : null}
           <button disabled={this.props.isSubmitting}>{this.state.mode === 'login' ? 'Login' : 'Sign Up'}</button>
@@ -74,7 +80,7 @@ const FormikApp = withFormik({
         })
         .catch((e) => {
           console.log(e);
-          setFieldError('email', e.message);
+          setFieldError('error', e.message);
           setSubmitting(false);
         });
     } else {
@@ -87,6 +93,7 @@ const FormikApp = withFormik({
         .catch((e) => {
           console.log(e)
           setSubmitting(false);
+          setFieldError('error', e.message);          
         });
     }
 
