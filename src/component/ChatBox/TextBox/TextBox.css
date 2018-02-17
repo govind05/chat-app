@@ -1,0 +1,14 @@
+.TextBox form input{
+  height: 30px;
+  font-size: 18px;
+  padding-left: 5px;
+  width: 78%;
+}
+
+.TextBox form button{
+  height: 36px;
+  position: relative;
+  font-size: 18px;
+  background-color: lawngreen;
+  border: 2px solid darkgreen;
+}

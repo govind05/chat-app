@@ -4,9 +4,10 @@
     padding: 5px;
     margin: 0 5px;
     margin-bottom: 10px;
-    float:  right;
+    float: right;
+    box-sizing: border-box;
 }
 
-.other{
-  float: left;
+.other {
+    float: left;
 }

@@ -7,7 +7,7 @@ const chatMessage = (props) => {
 
   let chatMessage = ['ChatMessage'];
   let classSender = "other";
-  let senderName = <span style={{color: 'red'}}>{props.sender}:</span>;
+  let senderName = <span style={{ color: 'red' }}>{props.sender}:</span>;
   //For checking the sender.
   if (props.sender === 'me') {
     classSender = "me";
@@ -17,11 +17,11 @@ const chatMessage = (props) => {
   chatMessage = chatMessage.concat(classSender).join(' ');
   let date = moment().format('hh:mm a');
   return (
-    <div>
+    <div style={{padding: 0, margin: 0, }}>
       <div className={chatMessage}>
         {senderName}
-        {props.message}<br/>
-        <span style={{fontSize:'11px', float:'right'}}>{date}</span>
+        {props.message}<br />
+        <span style={{ fontSize: '11px', float: 'right' }}>{date}</span>
       </div>
     </div>
   );
