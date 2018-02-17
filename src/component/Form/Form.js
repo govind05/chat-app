@@ -40,6 +40,7 @@ class FormLogin extends React.Component {
             <Field type='hidden' name='error' />
             {this.props.errors.error && <p>{this.props.errors.error}</p>}
           </div>
+          <Field type='hidden' value={this.state.mode} name='mode' />
           <div className='Input'>
             <Field type='email' name='email' placeholder='Email' autoFocus />
             {this.props.touched.email && this.props.errors.email && <p>{this.props.errors.email}</p>}
@@ -67,11 +68,13 @@ Yup.addMethod(Yup.mixed, 'sameAs', function (ref, message) {
 //Adding formik to the form.
 const FormikApp = withFormik({
   //Mapping user input to values.
-  mapPropsToValues({ email, password, confirmPassword }) {
+  mapPropsToValues({ email, password, confirmPassword, mode }) {
+    console.log(mode)
     return {
       email: email || '',
       password: password || '',
       confirmPassword: confirmPassword || '',
+      mode: mode || '',
     }
   },
   //Validation schema for the form.
@@ -84,7 +87,7 @@ const FormikApp = withFormik({
   // Handling the login or Signup event.
   handleSubmit(values, { resetForm, setErrors, setFieldError, setSubmitting }) {
     const auth = firebase.auth();
-  
+    console.log(values.mode)
     if (values.confirmPassword) {
       auth.createUserWithEmailAndPassword(values.email, values.password)
         .then((res) => {
@@ -93,6 +96,7 @@ const FormikApp = withFormik({
           console.log('Submitted', res);
         })
         .catch((e) => {
+          values.confirmPassword = '';
           console.log(e);
           setFieldError('error', e.message);
           setSubmitting(false);

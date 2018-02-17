@@ -18,7 +18,6 @@ const chatMessage = (props) => {
   let date = moment().format('hh:mm a');
   return (
     <div>
-      
       <div className={chatMessage}>
         {senderName}
         {props.message}<br/>
