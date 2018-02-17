@@ -36,17 +36,23 @@ class ChatBox extends React.Component {
       sender: this.props.user.uid,
       timeStamp: +Date.now().toString(),
     }
+    this.setState({
+      message: ''
+    })
     this.props.messageSend(message);
   }
 
   render() {
-    console.log(this.state.message);
-    let messages = this.props.messages.map(message =>
-      <ChatMessage
+    let messages = this.props.messages.map(message => {
+      return (<ChatMessage
         key={message.key}
         message={message.message}
         sender={message.sender}
+        time={message.time}
+        user={this.props.user}
       />)
+    }
+    )
     return (
       <div className='ChatBox'>
         {/* {this.this.props.children} */}
@@ -60,7 +66,9 @@ class ChatBox extends React.Component {
         </div>
         <TextBox
           onMessageWrite={this.onMessageWrite}
-          sendMessage={this.onMessageSent} />
+          sendMessage={this.onMessageSent}
+          message={this.state.message}
+        />
       </div>
     );
   }

@@ -6,7 +6,7 @@ const textBox = (props) => {
   return (
     <div className='TextBox'>
       <form onSubmit={props.sendMessage}>
-        <input autoFocus  type="text" placeholder='type here....' onChange={props.onMessageWrite} />
+        <input autoFocus  type="text" placeholder='type here....' onChange={props.onMessageWrite} value={props.message}/>
         <button type="submit">send</button>
       </form>
     </div>
