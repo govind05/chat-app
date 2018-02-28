@@ -8,20 +8,30 @@ const chatMessage = (props) => {
   let classSender = "other";
   let senderName;
   //For checking the sender.
+
+  let seen;
+  console.log(props.readBy)
+  if (props.readBy && props.readBy.length > 0) {
+    seen = <span style={{ fontSize: '9px', float: 'right' }}>seen</span>;
+  }
   if (props.sender === props.user.uid) {
     classSender = "me";
     senderName = null;
-  }else{
-    senderName = <span style={{ color: 'red' }}>Expert:</span>;
+  } else {
+    console.log(props.user);
+    seen = null;
+    senderName = <p style={{ margin: 0, fontWeight: 'bolder' }}>{props.senderName}:</p>;
   }
-
   chatMessage = chatMessage.concat(classSender).join(' ');
   return (
-    <div style={{padding: 0, margin: 0, }}>
+    <div style={{ padding: 0, margin: 0, }}>
       <div className={chatMessage}>
         {senderName}
         {props.message}<br />
-        <span style={{ fontSize: '11px', float: 'right' }}>{props.time}</span>
+        <div style={{display: 'flex', flexDirection: 'column'}}>
+          <span style={{ fontSize: '9px', float: 'right' }}>{props.time}</span>
+          {seen}
+        </div>
       </div>
     </div>
   );

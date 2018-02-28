@@ -2,5 +2,6 @@
     height: 100vh;
 
     /* height: 100vh; */
-    background: radial-gradient( lightcyan, lightcyan, lightgreen);
+    background: radial-gradient( #90CAF9, #2196F3);
+    /* background: #3F51B5 */
 }

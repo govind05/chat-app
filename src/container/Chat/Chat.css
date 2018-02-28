@@ -6,3 +6,17 @@
 .Chat h1{
   margin: 0;
 }
+
+.Chat #logout{
+  background: #304FFE;
+  height: 40px;
+  font-size: 20px;
+  border: 1px solid #304FFE;
+  border-radius: 7px;
+  color: white;
+  position: relative;
+  top: 10px;
+  left: 10px;
+  cursor: pointer;
+  /* box-shadow: 2px 3px 2px #3D5AFE; */
+}

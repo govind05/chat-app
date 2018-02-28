@@ -23,17 +23,34 @@ export default class Chat extends React.Component {
       }
     })
     const db = firebase.firestore();
-    db.collection('messages').onSnapshot(snap => {
+    db.collection('rooms').doc(this.props.location.state.id).collection('messages').onSnapshot(snap => {
       snap.docChanges.forEach(change => {
         if (change.type === 'added') {
-          let messages = this.state.messages.concat({
+          let messages;
+
+          messages = this.state.messages.concat({
             ...change.doc.data(),
-            key: change.doc.id
+            key: change.doc.id,
           });
-          messages = messages.sort((a, b) => (a.timeStamp > b.timeStamp ? 1 : (b.timeStamp > a.timeStamp) ? -1 : 0));
+
           messages = messages.map(message => {
-            
-            console.log(message.timeStamp, moment(message.timeStamp).format('h:mm a'))
+            if (message.sender !== this.state.user.uid) {
+              console.log(message.readBy)
+              if(message.readBy){
+                if (!(message.readBy.findIndex(m => m === this.state.user.uid) > -1)) {
+                  message.readBy.push(this.state.user.uid);
+                }
+              }
+            }
+            return message;
+          })
+          let message = messages.find(message => message.key === change.doc.id);
+          db.collection('rooms').doc(this.props.location.state.id).collection('messages').doc(change.doc.id).set({
+            ...message
+          })
+
+          let sortedMessages = messages.sort((a, b) => (a.timeStamp > b.timeStamp ? 1 : (b.timeStamp > a.timeStamp) ? -1 : 0));
+          sortedMessages = sortedMessages.map(message => {
             return {
               ...message,
               time: moment(message.timeStamp).format('hh:mm a')
@@ -41,16 +58,31 @@ export default class Chat extends React.Component {
           })
           console.log(messages);
           this.setState({
+            messages: sortedMessages
+          })
+        }
+        if (change.type === 'modified') {
+          let index = this.state.messages.findIndex(message => message.key === change.doc.id);
+          let messages = this.state.messages;
+          let message = change.doc.data();
+          messages[index] = {
+            ...this.state.messages[index],
+            ...message,
+          }
+          this.setState({
             messages
           })
+          console.log(this.state.messages)
+          console.log(message, change.doc.data())
         }
       })
     })
+
   }
 
   onNewMessage = (message) => {
     const db = firebase.firestore();
-    db.collection('messages').add(message)
+    db.collection('rooms').doc(this.props.location.state.id).collection('messages').add(message)
       .then(res => console.log(res, 'Message sent!!'))
       .catch(err => console.log(err));
   }
@@ -58,8 +90,7 @@ export default class Chat extends React.Component {
   render() {
     return (
       <div className='Chat'>
-        <h1>Chat Page</h1>
-        <button onClick={() => firebase.auth().signOut()} >Logout</button>
+        <button id='logout' onClick={() => firebase.auth().signOut()} >Logout</button>
         <ChatBox
           messageSend={this.onNewMessage}
           messages={this.state.messages}

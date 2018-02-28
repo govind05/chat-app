@@ -16,7 +16,7 @@ class FormLogin extends React.Component {
     auth.onAuthStateChanged(user => {
       console.log(user);
       if (user) {
-        this.props.history.push('/chat');
+        this.props.history.push('/rooms');
       }
     })
   }
@@ -33,14 +33,19 @@ class FormLogin extends React.Component {
       <Field type='password' name='confirmPassword' placeholder='Confirm Password' />
       {this.props.touched.confirmPassword && this.props.errors.confirmPassword && <p>{this.props.errors.confirmPassword}</p>}
     </div>
+
+    let displayName = <div className='Input'>
+      <Field type='text' name='displayName' placeholder='Display Name' />
+      {this.props.touched.displayName && this.props.errors.displayName && <p>{this.props.errors.displayName}</p>}
+    </div>
     return (
       <div className='AppForm'>
-        <Form className='Form' >
+        <Form className='Form'  >
           <div className='Error'>
             <Field type='hidden' name='error' />
             {this.props.errors.error && <p>{this.props.errors.error}</p>}
           </div>
-          <Field type='hidden' value={this.state.mode} name='mode' />
+          {this.state.mode === 'signUp' ? displayName : null}
           <div className='Input'>
             <Field type='email' name='email' placeholder='Email' autoFocus />
             {this.props.touched.email && this.props.errors.email && <p>{this.props.errors.email}</p>}
@@ -65,43 +70,62 @@ Yup.addMethod(Yup.mixed, 'sameAs', function (ref, message) {
   })
 })
 
+Yup.addMethod(Yup.mixed, 'nameRequired', function (ref, message) {
+  return this.test('nameRequired', message, function (value) {
+    const other = this.resolve(ref);
+    if(!other){
+      return true;
+    } else if(value){
+      return true;
+    } else{
+      return false;
+    }
+  })
+})
+
 //Adding formik to the form.
 const FormikApp = withFormik({
   //Mapping user input to values.
-  mapPropsToValues({ email, password, confirmPassword, mode }) {
-    console.log(mode)
+  mapPropsToValues({ confirmPassword, displayName, email, password }) {
     return {
       email: email || '',
       password: password || '',
       confirmPassword: confirmPassword || '',
-      mode: mode || '',
+      displayName: displayName || '',
     }
   },
   //Validation schema for the form.
-  validationSchema: Yup.object().shape({
+  validationSchema:  Yup.object().shape({
     email: Yup.string().email('Email not valid').required('Email is required'),
     password: Yup.string().min(8, 'Password must be 8 characters or longer').required('Password is required'),
-    confirmPassword: Yup.string().sameAs(Yup.ref('password'), "Password doesn't match")
+    confirmPassword: Yup.string().sameAs(Yup.ref('password'), "Password doesn't match"),
+    displayName: Yup.string().nameRequired(Yup.ref("confirmPassword") , 'Name is required'),
   }),
-
+  // 
   // Handling the login or Signup event.
   handleSubmit(values, { resetForm, setErrors, setFieldError, setSubmitting }) {
     const auth = firebase.auth();
-    console.log(values.mode)
+    console.log(values)
     if (values.confirmPassword) {
+      console.log('here')
       auth.createUserWithEmailAndPassword(values.email, values.password)
         .then((res) => {
           resetForm();
           setSubmitting(false);
+          firebase.auth().currentUser.updateProfile({
+            displayName: values.displayName
+          })
           console.log('Submitted', res);
         })
         .catch((e) => {
           values.confirmPassword = '';
+          // values.displayName = '';
           console.log(e);
           setFieldError('error', e.message);
           setSubmitting(false);
         });
     } else {
+      console.log('hehre')
       auth.signInWithEmailAndPassword(values.email, values.password)
         .then((res) => {
           resetForm();

@@ -34,7 +34,9 @@ class ChatBox extends React.Component {
     let message = {
       message: this.state.message,
       sender: this.props.user.uid,
+      senderName: this.props.user.displayName,
       timeStamp: +Date.now().toString(),
+      readBy: [],
     }
     this.setState({
       message: ''
@@ -49,14 +51,16 @@ class ChatBox extends React.Component {
         message={message.message}
         sender={message.sender}
         time={message.time}
+        senderName={message.senderName}
         user={this.props.user}
+        readBy={message.readBy}
       />)
     }
     )
     return (
       <div className='ChatBox'>
         {/* {this.this.props.children} */}
-        <h1>Chat here</h1>
+        <h1>Tech Support</h1>
         <div className='ChatMessages'
         >
           {messages}
